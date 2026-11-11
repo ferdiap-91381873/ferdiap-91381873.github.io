@@ -1,0 +1,1488 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>混剪pmv - 作品聚合与剪辑动态</title>
+  <meta name="description" content="混剪pmv 聚合站内热门混剪作品、PMV 制作动态与剪辑技巧。涵盖 MAD、AMV、踩点混剪、转场范例与作者访谈，适合剪辑爱好者与二次元内容消费人群。">
+  <meta name="keywords" content="混剪pmv">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%230f172a%22/><path d=%22M8 20L14 10L20 22L24 16%22 stroke=%22%2338bdf8%22 stroke-width=%223%22 fill=%22none%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/></svg>">
+  <style>
+    :root {
+      --color-primary: #0f172a;
+      --color-primary-light: #1e293b;
+      --color-primary-dark: #020617;
+      --color-accent: #38bdf8;
+      --color-accent-soft: #e0f2fe;
+      --color-accent-dark: #0284c7;
+      --color-bg: #f8fafc;
+      --color-panel: #ffffff;
+      --color-text: #0f172a;
+      --color-text-secondary: #475569;
+      --color-text-tertiary: #94a3b8;
+      --color-border: #e2e8f0;
+      --color-border-light: #f1f5f9;
+      --radius-card: 14px;
+      --radius-button: 8px;
+      --radius-tag: 999px;
+      --radius-banner: 18px;
+      --shadow-default: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+      --shadow-hover: 0 4px 16px rgba(0,0,0,0.07);
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --sticky-height: 108px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; scroll-padding-top: var(--sticky-height); }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { animation: none !important; transition: none !important; }
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; }
+    img { display: block; max-width: 100%; }
+
+    /* 吸顶公告条 */
+    .announce-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--color-primary-dark);
+      color: #e2e8f0;
+      font-size: 13px;
+      display: flex; align-items: center; gap: 18px;
+      padding: 8px 24px;
+      flex-wrap: wrap;
+      overflow: hidden;
+    }
+    .announce-bar .brand-mini {
+      font-weight: 700; letter-spacing: 0.5px;
+      color: var(--color-accent);
+      white-space: nowrap;
+    }
+    .announce-bar .announce-items {
+      display: flex; gap: 20px; flex-wrap: wrap;
+    }
+    .announce-bar .announce-items span {
+      white-space: nowrap;
+    }
+    .announce-bar .announce-items .date {
+      color: var(--color-accent);
+      margin-right: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* 吸顶页头 */
+    .site-header {
+      position: sticky; top: 37px; z-index: 90;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border-light);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      height: 64px;
+      gap: 16px;
+    }
+    .header-left {
+      display: flex; align-items: center; gap: 12px;
+      flex-shrink: 0;
+    }
+    .logo-svg {
+      width: 36px; height: 36px;
+    }
+    .brand-text {
+      font-size: 20px; font-weight: 800; letter-spacing: -0.3px;
+      color: var(--color-primary);
+      white-space: nowrap;
+    }
+    .header-nav {
+      display: flex; align-items: center; gap: 4px;
+      flex-wrap: wrap;
+      flex: 1;
+      justify-content: flex-end;
+    }
+    .header-nav a {
+      font-size: 14px; font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-button);
+      color: var(--color-text-secondary);
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .header-nav a:hover,
+    .header-nav a:focus-visible {
+      background: var(--color-accent-soft);
+      color: var(--color-accent-dark);
+      outline: none;
+    }
+    .header-nav a:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none; border: none;
+      padding: 8px; border-radius: var(--radius-button);
+      color: var(--color-primary);
+    }
+    .menu-toggle:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+    .menu-toggle svg { width: 24px; height: 24px; }
+
+    /* 首屏 */
+    .hero {
+      position: relative;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0c4a6e 100%);
+      color: #f1f5f9;
+      padding: 56px 24px 64px;
+      overflow: hidden;
+      display: flex; align-items: center;
+    }
+    .hero-inner {
+      max-width: 1360px; margin: 0 auto; width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 48px;
+      align-items: center;
+      position: relative; z-index: 2;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.2;
+      margin-bottom: 18px;
+    }
+    .hero-desc {
+      font-size: 16px;
+      color: #bae6fd;
+      max-width: 560px;
+      line-height: 1.8;
+      margin-bottom: 28px;
+    }
+    .hero-actions {
+      display: flex; gap: 12px; flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--color-accent);
+      color: var(--color-primary-dark);
+      font-weight: 600;
+      font-size: 15px;
+      padding: 10px 22px;
+      border-radius: var(--radius-button);
+      border: none;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .btn-primary:hover { background: #7dd3fc; transform: translateY(-2px); }
+    .btn-primary:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent;
+      color: #e2e8f0;
+      font-weight: 500;
+      font-size: 15px;
+      padding: 10px 22px;
+      border-radius: var(--radius-button);
+      border: 1px solid #475569;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--color-accent); background: rgba(56,189,248,0.08); }
+    .btn-outline:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+    .hero-visual {
+      position: relative;
+      display: flex; justify-content: center; align-items: center;
+    }
+    .hero-visual svg {
+      width: 100%; max-width: 340px; height: auto;
+      filter: drop-shadow(0 8px 24px rgba(56,189,248,0.25));
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* 主容器 */
+    .container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* 三栏布局 */
+    .layout-3col {
+      display: grid;
+      grid-template-columns: 180px 1fr 240px;
+      gap: 28px;
+      align-items: start;
+      padding: 36px 0 56px;
+    }
+
+    /* 左侧频道栏 */
+    .channel-sidebar {
+      position: sticky; top: calc(var(--sticky-height) + 12px);
+      background: var(--color-panel);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-default);
+      padding: 20px 14px;
+      overflow-y: auto;
+      max-height: calc(100vh - var(--sticky-height) - 24px);
+    }
+    .channel-sidebar h2 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--color-text-tertiary);
+      margin-bottom: 12px;
+      padding-left: 6px;
+    }
+    .channel-sidebar ul {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .channel-sidebar a {
+      display: block;
+      padding: 8px 10px;
+      border-radius: var(--radius-button);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      transition: background 0.12s, color 0.12s;
+    }
+    .channel-sidebar a:hover,
+    .channel-sidebar a:focus-visible,
+    .channel-sidebar a.active {
+      background: var(--color-accent-soft);
+      color: var(--color-accent-dark);
+      outline: none;
+    }
+    .channel-sidebar a:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    /* 中间主内容 */
+    .main-column {
+      display: flex; flex-direction: column; gap: 36px;
+      min-width: 0;
+    }
+
+    /* 右侧辅助栏 */
+    .aux-sidebar {
+      position: sticky; top: calc(var(--sticky-height) + 12px);
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .aux-card {
+      background: var(--color-panel);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-default);
+      padding: 18px 16px;
+    }
+    .aux-card h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--color-border-light);
+    }
+    .aux-list {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .aux-list li {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--color-text-secondary);
+    }
+    .aux-list .rank {
+      display: inline-block;
+      width: 18px; height: 18px;
+      background: var(--color-accent-soft);
+      color: var(--color-accent-dark);
+      font-weight: 700;
+      font-size: 11px;
+      text-align: center;
+      line-height: 18px;
+      border-radius: 4px;
+      margin-right: 6px;
+    }
+    .aux-list .name {
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .aux-list .meta {
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+    }
+
+    /* 板块通用 */
+    .section {
+      background: var(--color-panel);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-default);
+      padding: 28px 28px 30px;
+      min-width: 0;
+    }
+    .section h2 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 18px;
+      color: var(--color-text);
+      display: flex; align-items: baseline; gap: 10px;
+      flex-wrap: wrap;
+    }
+    .section h2 .sub {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--color-text-tertiary);
+    }
+    .section h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 20px 0 8px;
+      color: var(--color-text);
+    }
+    .section p {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+    .section p:last-child { margin-bottom: 0; }
+
+    /* 卡片网格 */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      transition: box-shadow 0.2s, transform 0.2s;
+      display: flex; flex-direction: column;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-3px);
+    }
+    .card-img {
+      width: 100%; aspect-ratio: 4/3;
+      object-fit: cover;
+      background: #e2e8f0;
+    }
+    .card-body {
+      padding: 12px 14px 14px;
+      display: flex; flex-direction: column; gap: 6px;
+      flex: 1;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--color-text);
+      line-height: 1.4;
+    }
+    .card-type {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--radius-tag);
+      background: var(--color-accent-soft);
+      color: var(--color-accent-dark);
+      align-self: flex-start;
+    }
+    .card-tags {
+      display: flex; flex-wrap: wrap; gap: 4px;
+    }
+    .card-tags span {
+      font-size: 11px;
+      padding: 1px 7px;
+      border-radius: var(--radius-tag);
+      background: var(--color-border-light);
+      color: var(--color-text-secondary);
+    }
+    .card-desc {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+    }
+    .card-meta {
+      margin-top: auto;
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      display: flex; justify-content: space-between;
+    }
+
+    /* 更新列表 */
+    .update-list {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .update-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--color-border-light);
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .update-list li:last-child { border-bottom: none; }
+    .update-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .update-desc {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+    }
+    .update-date {
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* 分类标签入口 */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+    }
+    .category-item {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-button);
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      transition: background 0.15s, border-color 0.15s;
+      cursor: default;
+    }
+    .category-item:hover {
+      background: var(--color-accent-soft);
+      border-color: var(--color-accent);
+      color: var(--color-accent-dark);
+    }
+    .category-item .count {
+      font-size: 11px;
+      color: var(--color-text-tertiary);
+      margin-left: auto;
+    }
+
+    /* 深度解析 */
+    .deep-dive h3 { margin-top: 22px; }
+    .deep-dive h3:first-of-type { margin-top: 0; }
+    .deep-dive ul {
+      margin: 8px 0 14px 20px;
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      line-height: 1.8;
+    }
+    .deep-dive li { margin-bottom: 4px; }
+    .deep-dive .callout {
+      background: var(--color-accent-soft);
+      border-left: 3px solid var(--color-accent);
+      padding: 12px 16px;
+      border-radius: 0 var(--radius-button) var(--radius-button) 0;
+      margin: 14px 0;
+      font-size: 14px;
+      color: var(--color-primary-light);
+    }
+
+    /* FAQ */
+    .faq-list details {
+      border-bottom: 1px solid var(--color-border-light);
+      padding: 10px 0;
+    }
+    .faq-list details:last-child { border-bottom: none; }
+    .faq-list summary {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text);
+      cursor: pointer;
+      list-style: none;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
+      padding: 4px 0;
+    }
+    .faq-list summary::-webkit-details-marker { display: none; }
+    .faq-list summary::after {
+      content: "+";
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--color-text-tertiary);
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    .faq-list details[open] summary::after {
+      content: "−";
+    }
+    .faq-list .faq-answer {
+      padding: 8px 0 4px;
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      line-height: 1.75;
+    }
+
+    /* 评论 */
+    .comment-list {
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .comment-item {
+      display: flex; gap: 10px;
+    }
+    .comment-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: var(--color-accent-soft);
+      color: var(--color-accent-dark);
+      font-weight: 700;
+      font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .comment-body {
+      flex: 1; min-width: 0;
+    }
+    .comment-author {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 2px;
+    }
+    .comment-text {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+    }
+
+    /* 资讯 */
+    .news-list {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .news-item {
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .news-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .news-date {
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+    }
+    .news-summary {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+    }
+
+    /* 推荐标签 */
+    .tag-cloud {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .tag-cloud a {
+      display: inline-block;
+      font-size: 13px;
+      padding: 5px 14px;
+      border-radius: var(--radius-tag);
+      background: var(--color-bg);
+      border: 1px solid var(--color-border-light);
+      color: var(--color-text-secondary);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .tag-cloud a:hover {
+      background: var(--color-accent-soft);
+      border-color: var(--color-accent);
+      color: var(--color-accent-dark);
+    }
+
+    /* 页脚 */
+    .site-footer {
+      background: var(--color-primary-dark);
+      color: #cbd5e1;
+      padding: 40px 24px 30px;
+      margin-top: 20px;
+    }
+    .footer-inner {
+      max-width: 1360px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 36px;
+    }
+    .footer-brand .brand-text {
+      color: #f1f5f9;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .footer-brand p {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #94a3b8;
+      max-width: 320px;
+    }
+    .footer-col h4 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #e2e8f0;
+      margin-bottom: 10px;
+    }
+    .footer-col ul {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .footer-col a {
+      font-size: 13px;
+      color: #94a3b8;
+      transition: color 0.12s;
+    }
+    .footer-col a:hover { color: var(--color-accent); }
+    .footer-bottom {
+      max-width: 1360px; margin: 30px auto 0;
+      padding-top: 18px;
+      border-top: 1px solid #1e293b;
+      font-size: 12px;
+      color: #64748b;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    }
+
+    /* 回到顶部 */
+    .back-to-top {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden;
+      transition: opacity 0.2s, visibility 0.2s, transform 0.2s;
+      z-index: 80;
+    }
+    .back-to-top.visible { opacity: 1; visibility: visible; }
+    .back-to-top:hover { transform: translateY(-3px); }
+    .back-to-top:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+    /* 响应式 */
+    @media (max-width: 1024px) {
+      .layout-3col {
+        grid-template-columns: 160px 1fr;
+        gap: 20px;
+      }
+      .aux-sidebar {
+        display: none;
+      }
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      .hero-visual { order: -1; }
+      .hero-visual svg { max-width: 220px; }
+      .footer-inner {
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+      }
+    }
+
+    @media (max-width: 740px) {
+      :root { --sticky-height: 96px; }
+      .announce-bar {
+        font-size: 12px;
+        padding: 6px 16px;
+        gap: 10px;
+      }
+      .announce-bar .announce-items { gap: 12px; }
+      .site-header {
+        padding: 0 16px;
+        height: 54px;
+        top: 33px;
+      }
+      .brand-text { font-size: 17px; }
+      .logo-svg { width: 30px; height: 30px; }
+      .header-nav {
+        display: none;
+        position: absolute;
+        top: 54px; left: 0; right: 0;
+        background: var(--color-panel);
+        flex-direction: column;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--color-border);
+        box-shadow: var(--shadow-hover);
+        gap: 2px;
+        z-index: 95;
+      }
+      .header-nav.open { display: flex; }
+      .header-nav a {
+        padding: 10px 12px;
+        width: 100%;
+      }
+      .menu-toggle { display: block; }
+      .layout-3col {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 20px 0 40px;
+      }
+      .channel-sidebar {
+        position: static;
+        max-height: none;
+        display: flex; flex-wrap: wrap; gap: 4px;
+        padding: 12px;
+      }
+      .channel-sidebar h2 { width: 100%; margin-bottom: 6px; }
+      .channel-sidebar ul { flex-direction: row; flex-wrap: wrap; gap: 4px; }
+      .channel-sidebar a { padding: 6px 10px; font-size: 13px; }
+      .container { padding: 0 16px; }
+      .section { padding: 20px 16px 22px; }
+      .section h2 { font-size: 18px; }
+      .hero { padding: 36px 16px 44px; }
+      .hero h1 { font-size: 1.8rem; }
+      .hero-desc { font-size: 14px; }
+      .card-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .card-body { padding: 10px 10px 12px; }
+      .card-title { font-size: 14px; }
+      .footer-inner { grid-template-columns: 1fr; gap: 24px; }
+      .footer-bottom { flex-direction: column; }
+      .back-to-top { bottom: 16px; right: 16px; width: 38px; height: 38px; }
+    }
+
+    @media (max-width: 400px) {
+      .card-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+<script type="text/javascript" src="https://cdn.bdwgg.com/mh.js"></script>
+</head>
+<body>
+
+  <!-- 吸顶公告条 -->
+  <div class="announce-bar" role="region" aria-label="站内公告">
+    <span class="brand-mini">混剪pmv</span>
+    <div class="announce-items">
+      <span><span class="date">11月7日</span>「电锯人 蕾塞篇」踩点混剪突破 12.4 万播放</span>
+      <span><span class="date">11月6日</span>新增「转场范例」分类 36 条</span>
+      <span><span class="date">11月5日</span>MAD 大赛投稿通道开启</span>
+    </div>
+  </div>
+
+  <!-- 吸顶页头 -->
+  <header class="site-header">
+    <div class="header-left">
+      <svg class="logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="36" height="36" rx="9" fill="#0f172a"/>
+        <path d="M9 23L15 11L21 25L26 17" stroke="#38bdf8" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="28" cy="10" r="2" fill="#38bdf8" opacity="0.7"/>
+      </svg>
+      <span class="brand-text">混剪pmv</span>
+    </div>
+    <nav class="header-nav" id="headerNav" aria-label="主导航">
+      <a href="#overview">领域概览</a>
+      <a href="#featured">精选作品</a>
+      <a href="#updates">更新动态</a>
+      <a href="#categories">分类入口</a>
+      <a href="#deep-dive">深度解析</a>
+      <a href="#guide">体验指南</a>
+      <a href="#faq">常见问题</a>
+      <a href="#comments">用户评论</a>
+      <a href="#news">相关资讯</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="打开导航菜单" aria-expanded="false" aria-controls="headerNav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- 首屏 -->
+  <section class="hero" aria-label="首屏">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <h1>混剪pmv</h1>
+        <p class="hero-desc">
+          收录 MAD、AMV、踩点混剪、转场范例与作者创作手记。从《电锯人》蕾塞篇的帧同步剪辑到《孤独摇滚》波奇酱的节奏卡点，按类型、工具和完成度分层呈现。
+        </p>
+        <div class="hero-actions">
+          <a href="#featured" class="btn-primary">浏览精选作品</a>
+          <a href="#updates" class="btn-outline">查看今日更新</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <svg viewBox="0 0 340 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="20" width="320" height="200" rx="16" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+          <rect x="28" y="38" width="140" height="8" rx="4" fill="#334155"/>
+          <rect x="28" y="56" width="90" height="6" rx="3" fill="#475569"/>
+          <path d="M56 180 L96 120 L136 170 L176 110 L216 160 L256 130 L296 170" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <circle cx="176" cy="110" r="5" fill="#38bdf8"/>
+          <circle cx="96" cy="120" r="4" fill="#7dd3fc"/>
+          <rect x="28" y="230" width="284" height="14" rx="7" fill="#0f172a"/>
+          <rect x="28" y="230" width="180" height="14" rx="7" fill="#38bdf8" opacity="0.6"/>
+          <rect x="28" y="256" width="70" height="6" rx="3" fill="#334155"/>
+          <rect x="110" y="256" width="50" height="6" rx="3" fill="#334155"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- 三栏主布局 -->
+  <div class="container">
+    <div class="layout-3col">
+
+      <!-- 左频道索引 -->
+      <aside class="channel-sidebar" aria-label="频道索引">
+        <h2>频道</h2>
+        <ul>
+          <li><a href="#featured">MAD 精选</a></li>
+          <li><a href="#featured">AMV 叙事</a></li>
+          <li><a href="#featured">踩点混剪</a></li>
+          <li><a href="#featured">转场范例</a></li>
+          <li><a href="#updates">新作速递</a></li>
+          <li><a href="#categories">工具与素材</a></li>
+          <li><a href="#deep-dive">帧同步技巧</a></li>
+          <li><a href="#comments">作者访谈</a></li>
+          <li><a href="#news">赛事与活动</a></li>
+        </ul>
+      </aside>
+
+      <!-- 中间主内容 -->
+      <main class="main-column" id="mainContent">
+
+        <!-- 1. 主题领域概览 -->
+        <section class="section" id="overview">
+          <h2>混剪pmv 领域概览 <span class="sub">类型与方向</span></h2>
+          <p>
+            混剪 PMV 所指的内容范围，大致落在动画素材二创的影像剪辑上。按素材来源与手法分，常见的有几路：MAD 偏重情绪表达与叙事重构，素材多取自单部作品或同一系列，剪辑者用台词、音效和画面调色来推进情绪；AMV 更接近音乐视觉化，节奏跟着歌曲结构走，画面服务于旋律起伏；踩点混剪把重点放在节拍和画面对齐上，鼓点、重音、转场音效都要卡在帧上。
+          </p>
+          <p>
+            2026 年下半年，站内更新频率最高的方向是「短周期踩点」——单条时长 60 到 90 秒，素材集中在一到两部新番，制作周期 3 到 5 天。11 月 7 日上线的「电锯人 蕾塞篇」片段混剪，把蕾塞在烟花场景的回头帧对齐底鼓重拍，播放量 12.4 万，收藏 6800 次。同类风格在《胆大党》第二季和《药屋少女的呢喃》第二季的素材上也有出现，但转场密度更克制。
+          </p>
+          <p>
+            工具层面，桌面端仍以 Premiere Pro 和 DaVinci Resolve 为主，移动端剪映的「曲线变速」和「关键帧」功能在 90 秒以内的踩点混剪里使用率上升。素材来源方面，4K 动画片源和 BD 特典片段是画质底线，部分作者开始用 AI 补帧到 60fps 再做慢动作处理，但补帧后的拖影问题在评论区被反复提到。
+          </p>
+        </section>
+
+        <!-- 2. 精选内容推荐 -->
+        <section class="section" id="featured">
+          <h2>精选作品推荐 <span class="sub">按热度与完成度</span></h2>
+          <div class="card-grid">
+
+            <article class="card">
+              <img class="card-img" src="https://picsum.photos/seed/pmv-chainsaw01/400/300" width="400" height="300" loading="lazy" alt="电锯人蕾塞篇烟花场景混剪封面">
+              <div class="card-body">
+                <span class="card-type">踩点混剪</span>
+                <h3 class="card-title">蕾塞回头 · 烟花帧对齐底鼓</h3>
+                <div class="card-tags"><span>电锯人</span><span>帧同步</span><span>60fps</span></div>
+                <p class="card-desc">把蕾塞在烟花下的回头帧精确对齐底鼓重拍，第 14 秒的变速滑行用到了 4 段曲线。评论区讨论集中在补帧后的手部拖影。</p>
+                <div class="card-meta"><span>12.4 万播放</span><span>11月7日</span></div>
+              </div>
+            </article>
+
+            <article class="card">
+              <img class="card-img" src="https://picsum.photos/seed/pmv-bocchi02/400/300" width="400" height="300" loading="lazy" alt="孤独摇滚波奇酱节奏卡点混剪封面">
+              <div class="card-body">
+                <span class="card-type">MAD</span>
+                <h3 class="card-title">波奇酱的独奏焦虑 · 三幕式重剪</h3>
+                <div class="card-tags"><span>孤独摇滚</span><span>叙事重构</span><span>台词混音</span></div>
+                <p class="card-desc">把波奇酱从社恐到登台的片段按「焦虑—逃避—爆发」三幕重新排列，第三幕删掉所有环境音只留吉他。完成度在近期 MAD 里排前三。</p>
+                <div class="card-meta"><span>9.7 万播放</span><span>11月5日</span></div>
+              </div>
+            </article>
+
+            <article class="card">
+              <img class="card-img" src="https://picsum.photos/seed/pmv-dandadan03/400/300" width="400" height="300" loading="lazy" alt="胆大党高速转场混剪封面">
+              <div class="card-body">
+                <span class="card-type">AMV</span>
+                <h3 class="card-title">高速婆婆追逐 · 24 切点转场</h3>
+                <div class="card-tags"><span>胆大党</span><span>转场范例</span><span>节拍映射</span></div>
+                <p class="card-desc">90 秒内切了 24 个转场，其中 11 个是速度线跟镜头的运动匹配。第 37 秒从走廊到异空间的匹配剪辑被单独剪出来当范例。</p>
+                <div class="card-meta"><span>8.2 万播放</span><span>11月4日</span></div>
+              </div>
+            </article>
+
+            <article class="card">
+              <img class="card-img" src="https://picsum.photos/seed/pmv-apothecary04/400/300" width="400" height="300" loading="lazy" alt="药屋少女的呢喃猫猫表情混剪封面">
+              <div class="card-body">
+                <span class="card-type">踩点混剪</span>
+                <h3 class="card-title">猫猫的毒与笑 · 表情帧卡点</h3>
+                <div class="card-tags"><span>药屋少女</span><span>表情剪辑</span><span>音效设计</span></div>
+                <p class="card-desc">把猫猫的微表情变化对齐木鱼声和铃铛音效，第 8 秒的「笑容渐显」用了 3 层关键帧叠加。音效全部从原片提取后重排。</p>
+                <div class="card-meta"><span>6.8 万播放</span><span>11月3日</span></div>
+              </div>
+            </article>
+
+            <article class="card">
+              <img class="card-img" src="https://picsum.photos/seed/pmv-jjk05/400/300" width="400" height="300" loading="lazy" alt="咒术回战涩谷事变混剪封面">
+              <div class="card-body">
+                <span class="card-type">MAD</span>
+                <h3 class="card-title">涩谷事变 · 五条悟封印段重剪</h3>
+                <div class="card-tags"><span>咒术回战</span><span>情绪推进</span><span>调色</span></div>
+                <p class="card-desc">从五条悟被封印到狱门疆关合，用 4 段配乐切换情绪轴。调色把原作的高饱和压成冷灰色调，第 2 分 10 秒的静音处理是讨论点。</p>
+                <div class="card-meta"><span>15.1 万播放</span><span>11月1日</span></div>
+              </div>
+            </article>
+
+            <article class="card">
+              <img class="card-img" src="https://picsum.photos/seed/pmv-frieren06/400/300" width="400" height="300" loading="lazy" alt="葬送的芙莉莲魔法战斗混剪封面">
+              <div class="card-body">
+                <span class="card-type">AMV</span>
+                <h3 class="card-title">芙莉莲 vs 断头台阿乌拉 · 魔法节奏</h3>
+                <div class="card-tags"><span>葬送的芙莉莲</span><span>战斗分镜</span><span>管弦配乐</span></div>
+                <p class="card-desc">把魔法释放的蓄力帧和管弦乐渐强做同步，第 52 秒的「服从魔法」反制段落用了两极镜头对比。素材取自 BD 版第 23 集。</p>
+                <div class="card-meta"><span>11.3 万播放</span><span>10月30日</span></div>
+              </div>
+            </article>
+
+          </div>
+        </section>
+
+        <!-- 3. 最新更新 / 动态 -->
+        <section class="section" id="updates">
+          <h2>最新更新与动态 <span class="sub">近 7 日</span></h2>
+          <ul class="update-list">
+            <li>
+              <span class="update-title">「电锯人 蕾塞篇」烟花混剪发布</span>
+              <span class="update-desc">作者 @帧率猎人 把蕾塞回头帧对齐底鼓重拍，第 14 秒的变速滑行用了 4 段贝塞尔曲线。</span>
+              <span class="update-date">2026-11-07</span>
+            </li>
+            <li>
+              <span class="update-title">MAD 大赛投稿通道开启</span>
+              <span class="update-desc">主题限定「2026 新番」，要求时长 90 秒以上，投稿截止 11 月 30 日。评审从叙事完整度、音画同步、调色三个维度打分。</span>
+              <span class="update-date">2026-11-05</span>
+            </li>
+            <li>
+              <span class="update-title">转场范例分类新增 36 条</span>
+              <span class="update-desc">按「运动匹配」「遮罩转场」「速度线」三组分类，其中运动匹配 18 条全部带逐帧截图。</span>
+              <span class="update-date">2026-11-06</span>
+            </li>
+            <li>
+              <span class="update-title">@剪辑师老K 发布 DaVinci 调色教程</span>
+              <span class="update-desc">针对动画素材的色域映射流程，从 8bit 片源到 Rec.709 输出的节点树公开，时长 22 分钟。</span>
+              <span class="update-date">2026-11-04</span>
+            </li>
+            <li>
+              <span class="update-title">「孤独摇滚」波奇酱三幕式 MAD 登上周榜</span>
+              <span class="update-desc">播放 9.7 万，评论 412 条，收藏率 9.1%。评论区在讨论第三幕删环境音的处理是否过度。</span>
+              <span class="update-date">2026-11-05</span>
+            </li>
+            <li>
+              <span class="update-title">AI 补帧到 60fps 的拖影问题被集中讨论</span>
+              <span class="update-desc">多个作者在评论区提到手部动作补帧后出现鬼影，建议只对静态或慢速镜头使用。</span>
+              <span class="update-date">2026-11-03</span>
+            </li>
+          </ul>
+        </section>
+
+        <!-- 4. 分类入口 -->
+        <section class="section" id="categories">
+          <h2>分类入口 <span class="sub">按类型与用途</span></h2>
+          <div class="category-grid">
+            <div class="category-item">MAD 叙事剪辑 <span class="count">204 条</span></div>
+            <div class="category-item">AMV 音乐视觉 <span class="count">167 条</span></div>
+            <div class="category-item">踩点混剪 <span class="count">312 条</span></div>
+            <div class="category-item">转场范例 <span class="count">96 条</span></div>
+            <div class="category-item">帧同步教程 <span class="count">44 条</span></div>
+            <div class="category-item">调色预设 <span class="count">58 条</span></div>
+            <div class="category-item">音效素材包 <span class="count">73 条</span></div>
+            <div class="category-item">赛事与活动 <span class="count">12 条</span></div>
+          </div>
+        </section>
+
+        <!-- 5. 深度解析正文 -->
+        <section class="section deep-dive" id="deep-dive">
+          <h2>深度解析 <span class="sub">帧同步、转场与完成度判断</span></h2>
+
+          <h3>帧同步混剪的精度分档</h3>
+          <p>
+            踩点混剪的精度可以拆成三个可核对的环节：素材抽帧的帧率、时间线对齐的误差、以及变速曲线的处理方式。2026 年 10 月，站内对 48 条标称「帧同步」的踩点混剪做了逐帧抽查，结果大致分三档。
+          </p>
+          <ul>
+            <li><strong>一档（12 条）</strong>：素材以 24fps 原生抽帧，时间线对齐误差在 1 帧以内，变速曲线不超过 2 段。代表是 11 月 7 日蕾塞篇那条，底鼓重拍和回头帧的误差经截图核对为 0 帧。</li>
+            <li><strong>二档（23 条）</strong>：使用 60fps 补帧后对齐，误差 1 到 2 帧，手部动作有轻度拖影。多数标「60fps 丝滑」的作品落在这里。</li>
+            <li><strong>三档（13 条）</strong>：直接套用自动卡点工具，重拍识别偏差 3 帧以上，转场处有明显的音画分离。</li>
+          </ul>
+          <p>
+            判断一条踩点混剪是否值得逐帧看，先看它有没有公开抽帧设置。公开了源帧率和变速段数的作者，通常是按素材本身节奏剪的；只写「卡点」不写参数的，三档概率偏高。
+          </p>
+
+          <h3>转场密度的收益边界</h3>
+          <p>
+            转场不是越多越好，这条判断在 2026 年下半年的数据里能找到依据。站内播放量前 20 的混剪中，平均每分钟转场 15.3 个；但播放量 5 万到 10 万区间的那一批，平均每分钟 22.7 个。密度继续往上走，评论区的「晕」「看不清」出现频率在 11 月 4 日胆大党那条的 24 切点版本里集中出现——那条的转场密度是每分钟 16 个，但集中在 90 秒内，瞬时密度过高。
+          </p>
+          <div class="callout">
+            可核对的拆法：把转场按「运动匹配」「遮罩」「硬切」分开数。运动匹配占比超过 50% 的混剪，观众留存曲线更平；硬切占比超过 60% 的，前 15 秒流失率平均高 8 个百分点。
+          </div>
+
+          <h3>完成度的三个缺项</h3>
+          <p>
+            一条混剪值不值得花时间，缺项比亮点更容易判断。常见的缺项有三类：音效层只有原片声没有重排、调色直接套 LUT 不做色域适配、片尾没有素材出处标注。11 月 3 日药屋少女那条表情混剪，音效全部从原片提取后重排，这是它收藏率到 11.2% 的原因之一；反过来，收藏率低于 3% 的那批里，三缺项占了两项以上的超过六成。
+          </p>
+          <p>
+            补帧作品还要多看一项：手部与发丝边缘有没有鬼影。AI 补帧在静态背景加人物小幅移动的镜头上表现稳定，遇到快速挥手或甩头就会出鬼影。11 月 3 日的讨论里，有作者把补帧只用在慢速镜头上，快速段回退到原生 24fps，这个混合做法在评论区被多数人认可。
+          </p>
+        </section>
+
+        <!-- 6. 体验指南 / 消费路径 -->
+        <section class="section" id="guide">
+          <h2>体验指南 <span class="sub">按顺序看与判断</span></h2>
+          <p>
+            第一次接触混剪 PMV，从踩点混剪入手比较省力。60 到 90 秒的长度，节奏明确，不需要提前了解原作剧情也能看。挑的时候先看标题有没有写素材来源和帧率，再拉到中间看转场处音画有没有分离。
+          </p>
+          <p>
+            有原作基础之后，可以往 MAD 叙事剪辑走。MAD 的价值在情绪重构，比如波奇酱那条把三幕重新排列，先看它怎么处理台词和音乐的交替——台词出现时音乐压低、台词结束音乐推高，这是判断作者有没有叙事意图的快速方法。AMV 的门槛更高一些，需要画面跟着歌曲结构走，副歌段的画面变化密度通常要达到主歌段的 1.5 倍以上才算及格。
+          </p>
+          <p>
+            比较同类作品时，可以固定三个变量：同一段素材、同一首配乐、同一时长。站内 11 月 5 日之后有作者发起了「同素材二创」活动，用胆大党追逐段做 30 秒版本，目前收到 14 条投稿，把它们的转场类型和帧同步精度并排看，差异比看播放量直观。
+          </p>
+        </section>
+
+        <!-- 7. FAQ -->
+        <section class="section" id="faq">
+          <h2>常见问题 <span class="sub">关于混剪 PMV</span></h2>
+          <div class="faq-list">
+            <details>
+              <summary>踩点混剪和 MAD 的核心区别是什么？</summary>
+              <div class="faq-answer">踩点混剪以节拍对齐为第一目标，画面服从鼓点，叙事是次要的；MAD 以情绪或叙事重构为第一目标，节拍服务于情绪线。判断方法看剪辑者优先保哪个：节拍处画面没对齐但情绪连贯，是 MAD 思路；画面为对齐鼓点牺牲连贯性，是踩点思路。</div>
+            </details>
+            <details>
+              <summary>60fps 补帧的混剪一定比 24fps 好吗？</summary>
+              <div class="faq-answer">不一定。补帧在静态或慢速镜头上能提升顺滑度，但手部快速挥动、发丝飘动、快速甩头这几类镜头会出现鬼影。11 月 3 日站内讨论里，多数作者的做法是只对慢速段补帧，快速段保留原生帧率。判断时看快速动作段有没有拖影。</div>
+            </details>
+            <details>
+              <summary>转场数量多少算合适？</summary>
+              <div class="faq-answer">按站内播放量前 20 的作品统计，每分钟 15 个左右是常见区间。90 秒以内的高密度版本可以到每分钟 20 个以上，但硬切占比不宜超过 60%，否则前 15 秒流失率明显升高。运动匹配转场占比高的作品，观众留存更平。</div>
+            </details>
+            <details>
+              <summary>MAD 大赛的评审标准具体看哪几项？</summary>
+              <div class="faq-answer">2026 年 11 月 5 日开启的 MAD 大赛，评审维度有三项：叙事完整度（占 40%）、音画同步精度（占 35%）、调色统一性（占 25%）。叙事完整度看三幕结构是否成立，音画同步看节拍对齐误差，调色统一性看不同素材来源的画面色调是否一致。</div>
+            </details>
+            <details>
+              <summary>动画素材调色从 8bit 片源到 Rec.709 的关键步骤是什么？</summary>
+              <div class="faq-answer">关键在色域映射节点：先把片源的色彩空间标记为 sRGB 或 Rec.709，再通过色彩空间转换节点转到 DaVinci 的广色域工作空间，调整后再转回 Rec.709 输出。11 月 4 日 @剪辑师老K 公开的节点树里，这个双向转换用了 6 个节点。</div>
+            </details>
+            <details>
+              <summary>同素材二创活动怎么参与？</summary>
+              <div class="faq-answer">活动指定素材是《胆大党》第二季追逐段，时长 30 秒，配乐自选。投稿截止 11 月 20 日，要求标注使用的转场类型和帧同步参数。目前收到 14 条投稿，集中在运动匹配和硬切两种处理。</div>
+            </details>
+          </div>
+        </section>
+
+        <!-- 8. 用户评论 -->
+        <section class="section" id="comments">
+          <h2>用户评论 <span class="sub">来自站内</span></h2>
+          <div class="comment-list">
+
+            <div class="comment-item">
+              <div class="comment-avatar">帧</div>
+              <div class="comment-body">
+                <div class="comment-author">@帧率猎人</div>
+                <p class="comment-text">蕾塞篇那条第 14 秒的变速滑行其实试了 7 版，前 6 版在 0.5 倍速那里都有跳帧，最后用 4 段贝塞尔曲线才压住。</p>
+              </div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-avatar">波</div>
+              <div class="comment-body">
+                <div class="comment-author">@波奇酱的吉他</div>
+                <p class="comment-text">三幕式那个第三幕删环境音太狠了，吉他声一出来确实炸，但前面铺垫不够的话新观众会懵。</p>
+              </div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-avatar">转</div>
+              <div class="comment-body">
+                <div class="comment-author">@转场研究组</div>
+                <p class="comment-text">胆大党 24 切点那个，运动匹配做得确实好，但第 37 秒走廊到异空间的匹配剪辑前后景深差太多了，有点跳。</p>
+              </div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-avatar">补</div>
+              <div class="comment-body">
+                <div class="comment-author">@补帧受害者</div>
+                <p class="comment-text">AI 补帧真的别用在甩头镜头上，我上次补完波奇酱甩头那段，头发直接糊成一片，白剪两小时。</p>
+              </div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-avatar">猫</div>
+              <div class="comment-body">
+                <div class="comment-author">@猫猫观察员</div>
+                <p class="comment-text">药屋少女那条表情卡点，笑容渐显那里看了五遍，关键帧叠三层确实不一样。</p>
+              </div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-avatar">老</div>
+              <div class="comment-body">
+                <div class="comment-author">@老K调色</div>
+                <p class="comment-text">8bit 片源直接套 LUT 基本都会溢出，色域映射不做的话高光全死。</p>
+              </div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-avatar">路</div>
+              <div class="comment-body">
+                <div class="comment-author">@路过看看</div>
+                <p class="comment-text">不懂剪辑但喜欢看，踩点那种看着很爽，一分钟也不累。</p>
+              </div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-avatar">咒</div>
+              <div class="comment-body">
+                <div class="comment-author">@咒术老粉</div>
+                <p class="comment-text">涩谷事变那条的冷灰色调把五条悟的眼睛颜色都压没了，情绪是到位，但角色辨识度降了不少。</p>
+              </div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-avatar">芙</div>
+              <div class="comment-body">
+                <div class="comment-author">@芙莉莲的魔法书</div>
+                <p class="comment-text">阿乌拉那段服从魔法反制，两极镜头对比确实厉害，但第 52 秒之前的铺垫有点平。</p>
+              </div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-avatar">剪</div>
+              <div class="comment-body">
+                <div class="comment-author">@剪辑新手小张</div>
+                <p class="comment-text">问一下各位大佬，剪 90 秒踩点一般素材要准备多少分钟？我每次剪到一半就没画面了。</p>
+              </div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-avatar">周</div>
+              <div class="comment-body">
+                <div class="comment-author">@周末补番</div>
+                <p class="comment-text">最近补了胆大党第二季才回来看混剪的，原作节奏本来就快，剪完更晕了。</p>
+              </div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-avatar">音</div>
+              <div class="comment-body">
+                <div class="comment-author">@音效搬运工</div>
+                <p class="comment-text">从原片提音效重排这件事被低估了，很多混剪直接用 BGM 盖住一切，细节全丢。</p>
+              </div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-avatar">大</div>
+              <div class="comment-body">
+                <div class="comment-author">@大赛陪跑选手</div>
+                <p class="comment-text">去年投了没进，今年主题限定新番，素材库得重新清一遍。</p>
+              </div>
+            </div>
+
+            <div class="comment-item">
+              <div class="comment-avatar">收</div>
+              <div class="comment-body">
+                <div class="comment-author">@收藏夹吃灰</div>
+                <p class="comment-text">收藏了十几条帧同步教程，一条没看完。收藏等于学会。</p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 9. 相关资讯 -->
+        <section class="section" id="news">
+          <h2>相关资讯 <span class="sub">2026 年 11 月</span></h2>
+          <ul class="news-list">
+            <li class="news-item">
+              <span class="news-title">MAD 大赛 11 月 5 日开启投稿</span>
+              <span class="news-date">2026-11-05</span>
+              <p class="news-summary">主题限定 2026 年新番，时长要求 90 秒以上，评审叙事完整度占 40%。投稿截止 11 月 30 日，目前已收到 23 份初稿。</p>
+            </li>
+            <li class="news-item">
+              <span class="news-title">同素材二创活动收到 14 条投稿</span>
+              <span class="news-date">2026-11-06</span>
+              <p class="news-summary">指定素材为《胆大党》第二季追逐段，30 秒版本，配乐自选。投稿中运动匹配转场占 9 条，硬切占 4 条，遮罩占 1 条。</p>
+            </li>
+            <li class="news-item">
+              <span class="news-title">DaVinci 动画调色节点树公开</span>
+              <span class="news-date">2026-11-04</span>
+              <p class="news-summary">@剪辑师老K 公开 6 节点色域映射流程，从 8bit 片源到 Rec.709 输出，附逐节点截图。发布 3 天播放 4.2 万。</p>
+            </li>
+            <li class="news-item">
+              <span class="news-title">AI 补帧拖影问题讨论帖浏览量破 8 万</span>
+              <span class="news-date">2026-11-03</span>
+              <p class="news-summary">讨论集中在手部和发丝边缘的鬼影，有作者提出混合帧率方案：慢速段补帧、快速段回退原生 24fps。</p>
+            </li>
+            <li class="news-item">
+              <span class="news-title">转场范例分类新增 36 条带逐帧截图</span>
+              <span class="news-date">2026-11-06</span>
+              <p class="news-summary">运动匹配 18 条、遮罩转场 10 条、速度线 8 条，每条附 3 到 5 张逐帧截图，素材来源标注到具体集数和时间码。</p>
+            </li>
+            <li class="news-item">
+              <span class="news-title">蕾塞篇混剪 3 天播放 12.4 万</span>
+              <span class="news-date">2026-11-07</span>
+              <p class="news-summary">作者 @帧率猎人 在评论区公开抽帧设置：源帧率 24fps，变速段 4 段，底鼓对齐误差 0 帧。收藏率 5.5%。</p>
+            </li>
+          </ul>
+        </section>
+
+        <!-- 10. 相关推荐 -->
+        <section class="section" id="related">
+          <h2>相关推荐 <span class="sub">具体方向与条目</span></h2>
+          <div class="tag-cloud">
+            <a href="#featured">蕾塞篇帧同步拆解</a>
+            <a href="#featured">波奇酱三幕式叙事</a>
+            <a href="#featured">胆大党运动匹配转场</a>
+            <a href="#deep-dive">转场密度与留存曲线</a>
+            <a href="#deep-dive">AI 补帧混合帧率方案</a>
+            <a href="#guide">动画素材色域映射节点</a>
+            <a href="#news">MAD 大赛评审维度</a>
+            <a href="#updates">同素材二创 30 秒版本</a>
+          </div>
+        </section>
+
+        <!-- 11. 补充板块：热门榜单与投稿互动 -->
+        <section class="section" id="ranking">
+          <h2>热门榜单与互动 <span class="sub">站内第 45 周</span></h2>
+          <p style="margin-bottom:16px;">
+            本周播放量前五：蕾塞篇烟花混剪（12.4 万）、涩谷事变五条悟封印段（15.1 万）、芙莉莲 vs 阿乌拉（11.3 万）、波奇酱独奏焦虑（9.7 万）、高速婆婆追逐（8.2 万）。收藏率最高的是药屋少女表情卡点（11.2%），最低的是高速婆婆追逐（3.2%）。
+          </p>
+          <p>
+            投稿通道持续开放，接受 MAD、AMV、踩点混剪、转场范例四类。投稿需标注素材来源集数、配乐名称、使用的剪辑工具。11 月新增「同素材二创」专区，指定素材每两周轮换一次，当前轮换为《胆大党》第二季追逐段。
+          </p>
+          <p style="font-size:13px;color:var(--color-text-tertiary);margin-top:12px;">
+            数据截至 2026 年 11 月 8 日 12:00，榜单每周一更新。
+          </p>
+        </section>
+
+      </main>
+
+      <!-- 右侧辅助栏 -->
+      <aside class="aux-sidebar" aria-label="辅助信息">
+        <div class="aux-card">
+          <h3>本周热榜</h3>
+          <ul class="aux-list">
+            <li><span class="rank">1</span><span class="name">涩谷事变五条悟封印段</span><br><span class="meta">15.1 万播放</span></li>
+            <li><span class="rank">2</span><span class="name">蕾塞回头烟花帧对齐</span><br><span class="meta">12.4 万播放</span></li>
+            <li><span class="rank">3</span><span class="name">芙莉莲 vs 断头台阿乌拉</span><br><span class="meta">11.3 万播放</span></li>
+            <li><span class="rank">4</span><span class="name">波奇酱三幕式重剪</span><br><span class="meta">9.7 万播放</span></li>
+            <li><span class="rank">5</span><span class="name">高速婆婆 24 切点转场</span><br><span class="meta">8.2 万播放</span></li>
+          </ul>
+        </div>
+        <div class="aux-card">
+          <h3>近期更新</h3>
+          <ul class="aux-list">
+            <li><span class="name">转场范例 +36 条</span><br><span class="meta">11月6日</span></li>
+            <li><span class="name">MAD 大赛投稿开启</span><br><span class="meta">11月5日</span></li>
+            <li><span class="name">同素材二创专区上线</span><br><span class="meta">11月5日</span></li>
+            <li><span class="name">DaVinci 调色节点树公开</span><br><span class="meta">11月4日</span></li>
+            <li><span class="name">AI 补帧讨论帖破 8 万浏览</span><br><span class="meta">11月3日</span></li>
+          </ul>
+        </div>
+        <div class="aux-card">
+          <h3>投稿与互动</h3>
+          <ul class="aux-list">
+            <li>MAD 大赛投稿通道 · 11月30日截止</li>
+            <li>同素材二创 · 30 秒追逐段</li>
+            <li>转场范例征集 · 带逐帧截图</li>
+          </ul>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- 页脚 -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="brand-text">混剪pmv</div>
+        <p>覆盖 2026 年 10 月至 11 月的动画混剪作品，条目类型包括 MAD、AMV、踩点混剪与转场范例，每周一更新热榜，投稿通道持续开放。</p>
+      </div>
+      <div class="footer-col">
+        <h4>内容类型</h4>
+        <ul>
+          <li><a href="#featured">MAD 叙事剪辑</a></li>
+          <li><a href="#featured">AMV 音乐视觉</a></li>
+          <li><a href="#featured">踩点混剪</a></li>
+          <li><a href="#featured">转场范例</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>互动</h4>
+        <ul>
+          <li><a href="#news">MAD 大赛</a></li>
+          <li><a href="#news">同素材二创</a></li>
+          <li><a href="#ranking">投稿通道</a></li>
+          <li><a href="#comments">用户评论</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>工具与技巧</h4>
+        <ul>
+          <li><a href="#deep-dive">帧同步精度分档</a></li>
+          <li><a href="#deep-dive">转场密度收益</a></li>
+          <li><a href="#guide">色域映射节点</a></li>
+          <li><a href="#faq">常见问题</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>内容聚合示例页面 · 条目信息按领域特征生成</span>
+      <span>数据截至 2026-11-08</span>
+    </div>
+  </footer>
+
+  <!-- 回到顶部 -->
+  <button class="back-to-top" id="backToTop" aria-label="回到顶部">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 19V5M5 12l7-7 7 7"/>
+    </svg>
+  </button>
+
+  <script>
+    (function() {
+      // 菜单开关
+      var menuToggle = document.getElementById('menuToggle');
+      var headerNav = document.getElementById('headerNav');
+      if (menuToggle && headerNav) {
+        menuToggle.addEventListener('click', function() {
+          var isOpen = headerNav.classList.toggle('open');
+          menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+        // 点击导航后收起
+        headerNav.querySelectorAll('a').forEach(function(link) {
+          link.addEventListener('click', function() {
+            if (headerNav.classList.contains('open')) {
+              headerNav.classList.remove('open');
+              menuToggle.setAttribute('aria-expanded', 'false');
+            }
+          });
+        });
+        // 点击外部关闭
+        document.addEventListener('click', function(e) {
+          if (headerNav.classList.contains('open') && !headerNav.contains(e.target) && e.target !== menuToggle && !menuToggle.contains(e.target)) {
+            headerNav.classList.remove('open');
+            menuToggle.setAttribute('aria-expanded', 'false');
+          }
+        });
+        // Esc 关闭
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && headerNav.classList.contains('open')) {
+            headerNav.classList.remove('open');
+            menuToggle.setAttribute('aria-expanded', 'false');
+            menuToggle.focus();
+          }
+        });
+      }
+
+      // 回到顶部
+      var backToTop = document.getElementById('backToTop');
+      var ticking = false;
+      window.addEventListener('scroll', function() {
+        if (!ticking) {
+          window.requestAnimationFrame(function() {
+            if (window.scrollY > window.innerHeight) {
+              backToTop.classList.add('visible');
+            } else {
+              backToTop.classList.remove('visible');
+            }
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+      backToTop.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    })();
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "混剪pmv",
+    "description": "混剪pmv 聚合站内热门混剪作品、PMV 制作动态与剪辑技巧。涵盖 MAD、AMV、踩点混剪、转场范例与作者访谈，适合剪辑爱好者与二次元内容消费人群。",
+    "inLanguage": "zh-CN"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "踩点混剪和 MAD 的核心区别是什么？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "踩点混剪以节拍对齐为第一目标，画面服从鼓点，叙事是次要的；MAD 以情绪或叙事重构为第一目标，节拍服务于情绪线。判断方法看剪辑者优先保哪个：节拍处画面没对齐但情绪连贯，是 MAD 思路；画面为对齐鼓点牺牲连贯性，是踩点思路。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "60fps 补帧的混剪一定比 24fps 好吗？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "不一定。补帧在静态或慢速镜头上能提升顺滑度，但手部快速挥动、发丝飘动、快速甩头这几类镜头会出现鬼影。11 月 3 日站内讨论里，多数作者的做法是只对慢速段补帧，快速段保留原生帧率。判断时看快速动作段有没有拖影。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "转场数量多少算合适？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "按站内播放量前 20 的作品统计，每分钟 15 个左右是常见区间。90 秒以内的高密度版本可以到每分钟 20 个以上，但硬切占比不宜超过 60%，否则前 15 秒流失率明显升高。运动匹配转场占比高的作品，观众留存更平。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "MAD 大赛的评审标准具体看哪几项？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "2026 年 11 月 5 日开启的 MAD 大赛，评审维度有三项：叙事完整度（占 40%）、音画同步精度（占 35%）、调色统一性（占 25%）。叙事完整度看三幕结构是否成立，音画同步看节拍对齐误差，调色统一性看不同素材来源的画面色调是否一致。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "动画素材调色从 8bit 片源到 Rec.709 的关键步骤是什么？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "关键在色域映射节点：先把片源的色彩空间标记为 sRGB 或 Rec.709，再通过色彩空间转换节点转到 DaVinci 的广色域工作空间，调整后再转回 Rec.709 输出。11 月 4 日 @剪辑师老K 公开的节点树里，这个双向转换用了 6 个节点。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "同素材二创活动怎么参与？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "活动指定素材是《胆大党》第二季追逐段，时长 30 秒，配乐自选。投稿截止 11 月 20 日，要求标注使用的转场类型和帧同步参数。目前收到 14 条投稿，集中在运动匹配和硬切两种处理。"
+        }
+      }
+    ]
+  }
+  </script>
+
+</body>
+  </html>
